@@ -1,5 +1,5 @@
 {
-    "name": "hyperf-ext/jwt",
+    "name": "kwm/hyperf-jwt",
     "type": "library",
     "license": "MIT",
     "keywords": [
@@ -36,11 +36,11 @@
         "ext-swoole": ">=4.5",
         "ext-json": "*",
         "ext-openssl": "*",
-        "hyperf/cache": "^2.1",
-        "hyperf/command": "^2.1",
-        "hyperf/config": "^2.1",
-        "hyperf/di": "^2.1",
-        "hyperf/framework": "^2.1",
+        "hyperf/cache": "^2.1|^3.0",
+        "hyperf/command": "^2.1|^3.0",
+        "hyperf/config": "^2.1|^3.0",
+        "hyperf/di": "^2.1|^3.0",
+        "hyperf/framework": "^2.1|^3.0",
         "lcobucci/jwt": "~4.1.0",
         "nesbot/carbon": "^2.0"
     },
