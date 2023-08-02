@@ -17,11 +17,11 @@ use Symfony\Component\Console\Input\InputOption;
 abstract class AbstractGenCommand extends HyperfCommand
 {
     /**
-     * @var \Hyperf\Contract\ConfigInterface
+     * @var ConfigInterface
      */
-    protected $config;
+    protected ConfigInterface $config;
 
-    protected $description;
+    protected string $description;
 
     public function __construct(ConfigInterface $config)
     {
@@ -29,7 +29,7 @@ abstract class AbstractGenCommand extends HyperfCommand
         $this->config = $config;
     }
 
-    public function configure()
+    public function configure(): void
     {
         parent::configure();
         $this->setDescription($this->description);
@@ -39,11 +39,10 @@ abstract class AbstractGenCommand extends HyperfCommand
     }
 
     /**
-     * @param null|mixed $default
-     *
+     * @param mixed|null $default
      * @return null|mixed
      */
-    protected function getOption(string $name, $default = null)
+    protected function getOption(string $name, mixed $default = null): mixed
     {
         $result = $this->input->getOption($name);
         return empty($result) ? $default : $result;

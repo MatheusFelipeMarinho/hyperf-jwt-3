@@ -14,11 +14,11 @@ use Hyperf\Utils\Str;
 
 class GenJwtSecretCommand extends AbstractGenCommand
 {
-    protected $name = 'gen:jwt-secret';
+    protected ?string $name = 'gen:jwt-secret';
 
-    protected $description = 'Set the JWT secret key used to sign the tokens';
+    protected string $description = 'Set the JWT secret key used to sign the tokens';
 
-    public function handle()
+    public function handle(): void
     {
         $key = base64_encode(random_bytes(64));
 
@@ -62,8 +62,8 @@ class GenJwtSecretCommand extends AbstractGenCommand
 
     protected function isConfirmed(): bool
     {
-        return $this->getOption('force') ? true : $this->confirm(
-            'Are you sure you want to override the key? This will invalidate all existing tokens.'
-        );
+        return $this->getOption('force') || $this->confirm(
+                'Are you sure you want to override the key? This will invalidate all existing tokens.'
+            );
     }
 }

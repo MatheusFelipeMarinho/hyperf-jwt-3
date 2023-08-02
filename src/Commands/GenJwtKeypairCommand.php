@@ -14,11 +14,11 @@ use Hyperf\Utils\Str;
 
 class GenJwtKeypairCommand extends AbstractGenCommand
 {
-    protected $name = 'gen:jwt-keypair';
+    protected ?string $name = 'gen:jwt-keypair';
 
-    protected $description = 'Set the JWT private key and public key used to sign the tokens';
+    protected string $description = 'Set the JWT private key and public key used to sign the tokens';
 
-    protected $configs = [
+    protected array $configs = [
         'RS256' => ['private_key_type' => OPENSSL_KEYTYPE_RSA, 'digest_alg' => 'SHA256', 'private_key_bits' => 4096],
         'RS384' => ['private_key_type' => OPENSSL_KEYTYPE_RSA, 'digest_alg' => 'SHA384', 'private_key_bits' => 4096],
         'RS512' => ['private_key_type' => OPENSSL_KEYTYPE_RSA, 'digest_alg' => 'SHA512', 'private_key_bits' => 4096],
@@ -27,7 +27,7 @@ class GenJwtKeypairCommand extends AbstractGenCommand
         'ES512' => ['private_key_type' => OPENSSL_KEYTYPE_EC, 'digest_alg' => 'SHA512', 'curve_name' => 'secp521r1'],
     ];
 
-    public function handle()
+    public function handle(): void
     {
         [, $config] = $this->choiceAlgorithm();
         $passphrase = $this->setPassphrase();
@@ -71,7 +71,7 @@ class GenJwtKeypairCommand extends AbstractGenCommand
         $this->info('JWT key pair set successfully.');
     }
 
-    protected function writeEnv(string $path, string $name, ?string $value, bool $force)
+    protected function writeEnv(string $path, string $name, ?string $value, bool $force): void
     {
         $envKey = 'JWT_' . Str::upper(Str::snake($name));
         $envValue = empty($value) ? '(null)' : '"' . str_replace("\n", '\\n', $value) . '"';
@@ -112,9 +112,9 @@ class GenJwtKeypairCommand extends AbstractGenCommand
 
     protected function isConfirmed(): bool
     {
-        return $this->getOption('force') ? true : $this->confirm(
-            'Are you sure you want to override the key pair? This will invalidate all existing tokens.'
-        );
+        return $this->getOption('force') || $this->confirm(
+                'Are you sure you want to override the key pair? This will invalidate all existing tokens.'
+            );
     }
 
     protected function displayKey(string $privateKey, string $publicKey, ?string $passphrase): void
