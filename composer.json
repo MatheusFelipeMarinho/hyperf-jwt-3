@@ -23,8 +23,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "HyperfExt\\Jwt\\": "src/",
-
+            "HyperfExt\\Jwt\\": "src/"
         }
     },
     "autoload-dev": {
