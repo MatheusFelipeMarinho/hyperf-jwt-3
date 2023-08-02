@@ -3,53 +3,29 @@
 declare(strict_types=1);
 /**
  * This file is part of hyperf-ext/jwt
- *
  * @link     https://github.com/hyperf-ext/jwt
  * @contact  eric@zhu.email
  * @license  https://github.com/hyperf-ext/jwt/blob/master/LICENSE
  */
+
 namespace HyperfExt\Jwt;
 
 use HyperfExt\Jwt\Contracts\StorageInterface;
+use function Hyperf\Support\value;
 
 class Blacklist
 {
     /**
-     * The storage.
-     *
-     * @var \HyperfExt\Jwt\Contracts\StorageInterface
-     */
-    protected $storage;
-
-    /**
-     * The grace period when a token is blacklisted. In seconds.
-     *
-     * @var int
-     */
-    protected $gracePeriod;
-
-    /**
-     * Number of seconds from issue date in which a JWT can be refreshed.
-     *
-     * @var null|int
-     */
-    protected $refreshTtl;
-
-    /**
      * The unique key held within the blacklist.
-     *
      * @var string
      */
-    protected $key = 'jti';
+    protected string $key = 'jti';
 
     /**
      * Constructor.
      */
-    public function __construct(StorageInterface $storage, int $gracePeriod, ?int $refreshTtl)
+    public function __construct(protected StorageInterface $storage, protected int $gracePeriod, protected ?int $refreshTtl)
     {
-        $this->storage = $storage;
-        $this->gracePeriod = $gracePeriod;
-        $this->refreshTtl = $refreshTtl;
     }
 
     /**
@@ -59,12 +35,12 @@ class Blacklist
     {
         // if there is no exp claim then add the jwt to
         // the blacklist indefinitely
-        if (! $payload->hasKey('exp')) {
+        if (!$payload->hasKey('exp')) {
             return $this->addForever($payload);
         }
 
         // if we have already added this token to the blacklist
-        if (! empty($this->storage->get($this->getKey($payload)))) {
+        if (!empty($this->storage->get($this->getKey($payload)))) {
             return true;
         }
 
@@ -92,7 +68,7 @@ class Blacklist
      */
     public function has(Payload $payload): bool
     {
-        $val = $this->storage->get((string) $this->getKey($payload));
+        $val = $this->storage->get((string)$this->getKey($payload));
 
         // exit early if the token was blacklisted forever,
         if ($val === 'forever') {
@@ -100,7 +76,7 @@ class Blacklist
         }
 
         // check whether the expiry + grace has past
-        return ! empty($val) and ! Utils::isFuture($val['valid_until']);
+        return !empty($val) and !Utils::isFuture($val['valid_until']);
     }
 
     /**
@@ -123,12 +99,11 @@ class Blacklist
 
     /**
      * Set the grace period.
-     *
      * @return $this
      */
-    public function setGracePeriod(int $gracePeriod)
+    public function setGracePeriod(int $gracePeriod): static
     {
-        $this->gracePeriod = (int) $gracePeriod;
+        $this->gracePeriod = $gracePeriod;
 
         return $this;
     }
@@ -143,20 +118,19 @@ class Blacklist
 
     /**
      * Get the unique key held within the blacklist.
-     *
+     * @param Payload $payload
      * @return mixed
      */
-    public function getKey(Payload $payload)
+    public function getKey(Payload $payload): mixed
     {
         return $payload($this->key);
     }
 
     /**
      * Set the unique key held within the blacklist.
-     *
      * @return $this
      */
-    public function setKey(string $key)
+    public function setKey(string $key): static
     {
         $this->key = value($key);
 
@@ -165,12 +139,11 @@ class Blacklist
 
     /**
      * Set the refresh time limit.
-     *
      * @return $this
      */
-    public function setRefreshTtl(?int $refreshTtl)
+    public function setRefreshTtl(?int $refreshTtl): static
     {
-        $this->refreshTtl = $refreshTtl === null ? null : (int) $refreshTtl;
+        $this->refreshTtl = $refreshTtl === null ? null : (int)$refreshTtl;
 
         return $this;
     }

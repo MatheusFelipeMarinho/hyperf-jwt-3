@@ -10,9 +10,9 @@ declare(strict_types=1);
  */
 namespace HyperfExt\Jwt\Claims;
 
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use HyperfExt\Jwt\Contracts\ClaimInterface;
 use HyperfExt\Jwt\Contracts\ManagerInterface;
 use JsonSerializable;
@@ -24,24 +24,24 @@ abstract class AbstractClaim implements ClaimInterface, Arrayable, Jsonable, Jso
      *
      * @var string
      */
-    protected $name;
+    protected string $name;
 
     /**
      * The claim value.
      *
      * @var mixed
      */
-    private $value;
+    private mixed $value;
 
     /**
-     * @var \HyperfExt\Jwt\Claims\Factory
+     * @var Factory
      */
-    private $factory;
+    private Factory $factory;
 
     /**
      * @param mixed $value
      */
-    public function __construct($value)
+    public function __construct(mixed $value)
     {
         $this->setValue($value);
     }
@@ -56,12 +56,10 @@ abstract class AbstractClaim implements ClaimInterface, Arrayable, Jsonable, Jso
 
     /**
      * Set the claim value, and call a validate method.
-     *
      * @param mixed $value
-     *
      * @return $this
      */
-    public function setValue($value)
+    public function setValue(mixed $value): static
     {
         $this->value = $this->validateCreate($value);
 
@@ -73,7 +71,7 @@ abstract class AbstractClaim implements ClaimInterface, Arrayable, Jsonable, Jso
      *
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
@@ -83,7 +81,7 @@ abstract class AbstractClaim implements ClaimInterface, Arrayable, Jsonable, Jso
      *
      * @return $this
      */
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
 
@@ -100,20 +98,21 @@ abstract class AbstractClaim implements ClaimInterface, Arrayable, Jsonable, Jso
 
     /**
      * Validate the claim in a standalone Claim context.
-     *
      * @param mixed $value
+     * @return mixed
      */
-    public function validateCreate($value)
+    public function validateCreate(mixed $value): mixed
     {
         return $value;
     }
 
     /**
      * Checks if the value matches the claim.
-     *
      * @param mixed $value
+     * @param bool  $strict
+     * @return bool
      */
-    public function matches($value, bool $strict = true): bool
+    public function matches(mixed $value, bool $strict = true): bool
     {
         return $strict ? $this->value === $value : $this->value == $value;
     }

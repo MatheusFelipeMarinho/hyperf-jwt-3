@@ -1,6 +1,8 @@
 <?php
 
 declare(strict_types=1);
+
+use function Hyperf\Support\env;
 /**
  * This file is part of hyperf-ext/jwt
  *

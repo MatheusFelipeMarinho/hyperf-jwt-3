@@ -10,8 +10,8 @@ declare(strict_types=1);
  */
 namespace HyperfExt\Jwt\Claims;
 
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Str;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Stringable\Str;
 use HyperfExt\Jwt\Contracts\ClaimInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -22,28 +22,28 @@ class Factory
      *
      * @var null|int
      */
-    protected $ttl;
+    protected ?int $ttl;
 
     /**
      * The refresh TTL.
      *
      * @var null|int
      */
-    protected $refreshTtl;
+    protected ?int $refreshTtl;
 
     /**
      * Time leeway in seconds.
      *
      * @var int
      */
-    protected $leeway;
+    protected int $leeway;
 
     /**
      * The classes map.
      *
      * @var array
      */
-    private $classMap = [
+    private array $classMap = [
         'aud' => Audience::class,
         'exp' => Expiration::class,
         'iat' => IssuedAt::class,
@@ -65,7 +65,7 @@ class Factory
      *
      * @param mixed $value
      */
-    public function get(string $name, $value): ClaimInterface
+    public function get(string $name, mixed $value): ClaimInterface
     {
         if ($this->has($name)) {
             $claim = make($this->classMap[$name], ['factory' => $this, 'value' => $value]);
@@ -99,7 +99,7 @@ class Factory
      *
      * @return $this
      */
-    public function extend(string $name, string $classPath)
+    public function extend(string $name, string $classPath): static
     {
         $this->classMap[$name] = $classPath;
 
@@ -111,7 +111,7 @@ class Factory
      *
      * @return $this
      */
-    public function setTtl(?int $ttl)
+    public function setTtl(?int $ttl): static
     {
         $this->ttl = $ttl === null ? null : (int) $ttl;
 
@@ -131,9 +131,9 @@ class Factory
      *
      * @return $this
      */
-    public function setRefreshTtl(?int $refreshTtl)
+    public function setRefreshTtl(?int $refreshTtl): static
     {
-        $this->refreshTtl = $refreshTtl === null ? null : (int) $refreshTtl;
+        $this->refreshTtl = $refreshTtl === null ? null : $refreshTtl;
 
         return $this;
     }
@@ -151,7 +151,7 @@ class Factory
      *
      * @return $this
      */
-    public function setLeeway(int $leeway)
+    public function setLeeway(int $leeway): static
     {
         $this->leeway = $leeway;
 

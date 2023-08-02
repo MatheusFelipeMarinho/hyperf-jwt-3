@@ -10,7 +10,7 @@ declare(strict_types=1);
  */
 namespace HyperfExt\Jwt\Claims;
 
-use Hyperf\Utils\Collection as HyperfCollection;
+use Hyperf\Collection\Collection as HyperfCollection;
 
 class Collection extends HyperfCollection
 {
@@ -26,10 +26,9 @@ class Collection extends HyperfCollection
 
     /**
      * Get a Claim instance by it's unique name.
-     *
-     * @param mixed $default
+     * @param mixed|null $default
      */
-    public function getByClaimName(string $name, ?callable $callback = null, $default = null): AbstractClaim
+    public function getByClaimName(string $name, ?callable $callback = null, mixed $default = null): AbstractClaim
     {
         return $this->filter(function (AbstractClaim $claim) use ($name) {
             return $claim->getName() === $name;
@@ -41,7 +40,7 @@ class Collection extends HyperfCollection
      *
      * @return $this
      */
-    public function validate(bool $ignoreExpired = false)
+    public function validate(bool $ignoreExpired = false): static
     {
         $this->each(function ($claim) use ($ignoreExpired) {
             $claim->validate($ignoreExpired);
@@ -51,10 +50,10 @@ class Collection extends HyperfCollection
 
     /**
      * Determine if the Collection contains all of the given keys.
-     *
      * @param mixed $claims
+     * @return bool
      */
-    public function hasAllClaims($claims): bool
+    public function hasAllClaims(mixed $claims): bool
     {
         return count($claims) and (new static($claims))->diff($this->keys())->isEmpty();
     }

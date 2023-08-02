@@ -12,7 +12,7 @@ namespace HyperfExt\Jwt\Claims;
 
 class Audience extends AbstractClaim
 {
-    protected $name = 'aud';
+    protected string $name = 'aud';
 
     public function validate(bool $ignoreExpired = false): bool
     {

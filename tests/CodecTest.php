@@ -16,6 +16,7 @@ use HyperfExt\Jwt\Exceptions\JwtException;
 use HyperfExt\Jwt\Exceptions\TokenInvalidException;
 use InvalidArgumentException;
 use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
@@ -25,6 +26,8 @@ use Lcobucci\JWT\Token\DataSet;
 use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validator;
 use Mockery;
+use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * @internal
@@ -33,19 +36,19 @@ use Mockery;
 class CodecTest extends AbstractTestCase
 {
     /**
-     * @var \Mockery\MockInterface
+     * @var MockInterface
      */
-    protected $parser;
+    protected MockInterface $parser;
 
     /**
-     * @var \Mockery\MockInterface
+     * @var MockInterface
      */
-    protected $builder;
+    protected MockInterface $builder;
 
     /**
-     * @var \Mockery\MockInterface
+     * @var MockInterface
      */
-    protected $validator;
+    protected MockInterface $validator;
 
     public function setUp(): void
     {
@@ -240,12 +243,13 @@ class CodecTest extends AbstractTestCase
     }
 
     /**
-     * @param $secret
-     * @param $algo
-     *
-     * @return \HyperfExt\Jwt\Codec|\PHPUnit\Framework\MockObject\MockObject
+     * @param       $secret
+     * @param       $algo
+     * @param array $keys
+     * @return Codec|MockObject
+     * @throws
      */
-    public function getCodec($secret, $algo, array $keys = [])
+    public function getCodec($secret, $algo, array $keys = []): Codec|MockObject
     {
         $codec = new Codec($secret, $algo, $keys);
         $config = Mockery::mock($codec->getConfig());
@@ -263,12 +267,12 @@ class CodecTest extends AbstractTestCase
         return $codec;
     }
 
-    public function getDummyPrivateKey()
+    public function getDummyPrivateKey(): false|string
     {
         return file_get_contents(__DIR__ . '/Keys/id_rsa');
     }
 
-    public function getDummyPublicKey()
+    public function getDummyPublicKey(): false|string
     {
         return file_get_contents(__DIR__ . '/Keys/id_rsa.pub');
     }

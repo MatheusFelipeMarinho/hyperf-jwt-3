@@ -12,7 +12,7 @@ namespace HyperfExt\Jwt\Claims;
 
 class JwtId extends AbstractClaim
 {
-    protected $name = 'jti';
+    protected string $name = 'jti';
 
     public function validate(bool $ignoreExpired = false): bool
     {

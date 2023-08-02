@@ -13,29 +13,30 @@ namespace HyperfExt\Jwt;
 use ArrayAccess;
 use BadMethodCallException;
 use Countable;
-use Hyperf\Utils\ApplicationContext;
-use Hyperf\Utils\Arr;
-use Hyperf\Utils\Contracts\Arrayable;
-use Hyperf\Utils\Contracts\Jsonable;
+use Hyperf\Context\ApplicationContext;
+use Hyperf\Collection\Arr;
+use Hyperf\Contract\Arrayable;
+use Hyperf\Contract\Jsonable;
 use HyperfExt\Jwt\Claims\AbstractClaim;
 use HyperfExt\Jwt\Claims\Collection;
 use HyperfExt\Jwt\Contracts\PayloadValidatorInterface;
 use HyperfExt\Jwt\Exceptions\PayloadException;
 use JsonSerializable;
+use function Hyperf\Support\value;
 
 class Payload implements ArrayAccess, Arrayable, Countable, Jsonable, JsonSerializable
 {
     /**
      * The collection of claims.
      *
-     * @var \HyperfExt\Jwt\Claims\Collection
+     * @var Collection
      */
-    private $claims;
+    private Collection $claims;
 
     /**
-     * @var \HyperfExt\Jwt\Contracts\PayloadValidatorInterface
+     * @var PayloadValidatorInterface
      */
-    private $validator;
+    private mixed $validator;
 
     /**
      * Build the Payload.
@@ -56,12 +57,10 @@ class Payload implements ArrayAccess, Arrayable, Countable, Jsonable, JsonSerial
 
     /**
      * Invoke the Payload as a callable function.
-     *
-     * @param mixed $claim
-     *
+     * @param mixed|null $claim
      * @return mixed
      */
-    public function __invoke($claim = null)
+    public function __invoke(mixed $claim = null): mixed
     {
         return $this->get($claim);
     }
@@ -123,12 +122,10 @@ class Payload implements ArrayAccess, Arrayable, Countable, Jsonable, JsonSerial
 
     /**
      * Get the payload.
-     *
-     * @param mixed $claim
-     *
+     * @param mixed|null $claim
      * @return mixed
      */
-    public function get($claim = null)
+    public function get(mixed $claim = null): mixed
     {
         $claim = value($claim);
 
@@ -204,24 +201,22 @@ class Payload implements ArrayAccess, Arrayable, Countable, Jsonable, JsonSerial
     /**
      * Get an item at a given offset.
      *
-     * @param mixed $key
+     * @param mixed $offset
      *
      * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet(mixed $offset): mixed
     {
-        return Arr::get($this->toArray(), $key);
+        return Arr::get($this->toArray(), $offset);
     }
 
     /**
      * Don't allow changing the payload as it should be immutable.
-     *
-     * @param mixed $key
+     * @param mixed $offset
      * @param mixed $value
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\PayloadException
+     * @throws PayloadException
      */
-    public function offsetSet($key, $value)
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         throw new PayloadException('The payload is immutable');
     }
@@ -229,11 +224,11 @@ class Payload implements ArrayAccess, Arrayable, Countable, Jsonable, JsonSerial
     /**
      * Don't allow changing the payload as it should be immutable.
      *
-     * @param string $key
+     * @param string $offset
      *
-     * @throws \HyperfExt\Jwt\Exceptions\PayloadException
+     * @throws PayloadException
      */
-    public function offsetUnset($key)
+    public function offsetUnset($offset): void
     {
         throw new PayloadException('The payload is immutable');
     }

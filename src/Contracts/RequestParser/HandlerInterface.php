@@ -16,8 +16,8 @@ interface HandlerInterface
 {
     /**
      * Parse the request.
-     *
-     * @param \Hyperf\HttpServer\Request|\Psr\Http\Message\ServerRequestInterface $request
+     * @param ServerRequestInterface $request
+     * @return string|null
      */
     public function parse(ServerRequestInterface $request): ?string;
 }

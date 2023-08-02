@@ -13,9 +13,10 @@ namespace HyperfExt\Jwt\Claims;
 class Custom extends AbstractClaim
 {
     /**
-     * @param mixed $value
+     * @param string $name
+     * @param mixed  $value
      */
-    public function __construct(string $name, $value)
+    public function __construct(string $name, mixed $value)
     {
         parent::__construct($value);
         $this->setName($name);

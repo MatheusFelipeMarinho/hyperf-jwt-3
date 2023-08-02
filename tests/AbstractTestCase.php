@@ -11,34 +11,38 @@ declare(strict_types=1);
 namespace HyperfTest;
 
 use Carbon\Carbon;
-use Hyperf\Utils\ApplicationContext;
+use Hyperf\Context\ApplicationContext;
 use HyperfExt\Jwt\Claims\Factory;
 use HyperfExt\Jwt\Contracts\ManagerInterface;
+use HyperfExt\Jwt\Manager;
 use HyperfExt\Jwt\ManagerFactory;
 use Mockery;
+use Mockery\LegacyMockInterface;
+use Mockery\MockInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
 abstract class AbstractTestCase extends TestCase
 {
     /**
      * @var int
      */
-    protected $testNowTimestamp;
+    protected int $testNowTimestamp;
 
     /**
-     * @var \Psr\Container\ContainerInterface
+     * @var ContainerInterface
      */
-    protected $container;
+    protected ContainerInterface $container;
 
     /**
-     * @var \HyperfExt\Jwt\Contracts\ManagerInterface|\HyperfExt\Jwt\Manager|\Mockery\LegacyMockInterface|\Mockery\MockInterface
+     * @var ManagerInterface|Manager|LegacyMockInterface|MockInterface
      */
-    protected $manager;
+    protected ManagerInterface|Manager|LegacyMockInterface|MockInterface $manager;
 
     /**
-     * @var \HyperfExt\Jwt\Claims\Factory
+     * @var Factory
      */
-    protected $claimFactory;
+    protected Factory $claimFactory;
 
     public function setUp(): void
     {

@@ -3,15 +3,15 @@
 declare(strict_types=1);
 /**
  * This file is part of hyperf-ext/jwt
- *
  * @link     https://github.com/hyperf-ext/jwt
  * @contact  eric@zhu.email
  * @license  https://github.com/hyperf-ext/jwt/blob/master/LICENSE
  */
+
 namespace HyperfExt\Jwt;
 
 use BadMethodCallException;
-use Hyperf\Utils\Context;
+use Hyperf\Context\Context;
 use HyperfExt\Jwt\Contracts\JwtSubjectInterface;
 use HyperfExt\Jwt\Contracts\ManagerInterface;
 use HyperfExt\Jwt\Contracts\RequestParser\RequestParserInterface;
@@ -23,43 +23,22 @@ class Jwt
     use CustomClaims;
 
     /**
-     * @var \HyperfExt\Jwt\Manager
-     */
-    protected $manager;
-
-    /**
-     * @var \HyperfExt\Jwt\Contracts\RequestParser\RequestParserInterface
-     */
-    protected $requestParser;
-
-    /**
-     * @var \Psr\Http\Message\ServerRequestInterface
-     */
-    protected $request;
-
-    /**
      * Lock the subject.
-     *
      * @var bool
      */
-    protected $lockSubject = true;
+    protected bool $lockSubject = true;
 
     public function __construct(
-        ManagerInterface $manager,
-        RequestParserInterface $requestParser,
-        ServerRequestInterface $request
+        protected ManagerInterface $manager,
+        protected RequestParserInterface $requestParser,
+        protected ServerRequestInterface $request
     ) {
-        $this->manager = $manager;
-        $this->requestParser = $requestParser;
-        $this->request = $request;
     }
 
     /**
      * Magically call the Jwt Manager.
-     *
-     * @throws \BadMethodCallException
-     *
      * @return mixed
+     * @throws \BadMethodCallException
      */
     public function __call(string $method, array $parameters)
     {
@@ -90,8 +69,7 @@ class Jwt
 
     /**
      * Refresh an expired token.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
+     * @throws JwtException
      */
     public function refresh(bool $forceForever = false): string
     {
@@ -99,10 +77,14 @@ class Jwt
 
         $this->setToken(
             $token = $this->manager
-                ->refresh($this->getToken(), $forceForever, array_merge(
-                    $this->getCustomClaims(),
-                    ($prv = $this->getPayload(true)->get('prv')) ? ['prv' => $prv] : []
-                ))
+                ->refresh(
+                    $this->getToken(),
+                    $forceForever,
+                    array_merge(
+                        $this->getCustomClaims(),
+                        ($prv = $this->getPayload(true)->get('prv')) ? ['prv' => $prv] : []
+                    )
+                )
                 ->get()
         );
 
@@ -111,11 +93,10 @@ class Jwt
 
     /**
      * Invalidate a token (add it to the blacklist).
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
      * @return $this
+     * @throws JwtException
      */
-    public function invalidate(bool $forceForever = false)
+    public function invalidate(bool $forceForever = false): static
     {
         $this->requireToken();
 
@@ -127,8 +108,7 @@ class Jwt
     /**
      * Alias to get the payload, and as a result checks that
      * the token is valid i.e. not expired or blacklisted.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
+     * @throws JwtException
      */
     public function checkOrFail(): Payload
     {
@@ -137,10 +117,10 @@ class Jwt
 
     /**
      * Check that the token is valid.
-     *
-     * @return bool|\HyperfExt\Jwt\Payload
+     * @param bool $getPayload
+     * @return bool|Payload
      */
-    public function check(bool $getPayload = false)
+    public function check(bool $getPayload = false): Payload|bool
     {
         try {
             $payload = $this->checkOrFail();
@@ -170,13 +150,12 @@ class Jwt
 
     /**
      * Parse the token from the request.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
      * @return $this
+     * @throws JwtException
      */
-    public function parseToken()
+    public function parseToken(): static
     {
-        if (! $token = $this->getRequestParser()->parseToken($this->request)) {
+        if (!$token = $this->getRequestParser()->parseToken($this->request)) {
             throw new JwtException('The token could not be parsed from the request');
         }
 
@@ -185,7 +164,7 @@ class Jwt
 
     /**
      * Get the raw Payload instance.
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
+     * @throws JwtException
      */
     public function getPayload(bool $ignoreExpired = false): Payload
     {
@@ -196,11 +175,11 @@ class Jwt
 
     /**
      * Convenience method to get a claim value.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
+     * @param string $claim
      * @return mixed
+     * @throws JwtException
      */
-    public function getClaim(string $claim)
+    public function getClaim(string $claim): mixed
     {
         return $this->getPayload()->get($claim);
     }
@@ -215,12 +194,11 @@ class Jwt
 
     /**
      * Check if the subject model matches the one saved in the token.
-     *
      * @param object|string $model
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
+     * @return bool
+     * @throws JwtException
      */
-    public function checkSubjectModel($model): bool
+    public function checkSubjectModel(object|string $model): bool
     {
         if (($prv = $this->getPayload()->get('prv')) === null) {
             return true;
@@ -231,12 +209,10 @@ class Jwt
 
     /**
      * Set the token.
-     *
-     * @param \HyperfExt\Jwt\Token|string $token
-     *
+     * @param string|Token $token
      * @return $this
      */
-    public function setToken($token)
+    public function setToken(Token|string $token): static
     {
         Context::set(Token::class, $token instanceof Token ? $token : new Token($token));
 
@@ -245,10 +221,9 @@ class Jwt
 
     /**
      * Unset the current token.
-     *
      * @return $this
      */
-    public function unsetToken()
+    public function unsetToken(): static
     {
         Context::destroy(Token::class);
 
@@ -258,7 +233,7 @@ class Jwt
     /**
      * @return $this
      */
-    public function setRequest(ServerRequestInterface $request)
+    public function setRequest(ServerRequestInterface $request): static
     {
         $this->request = $request;
 
@@ -267,10 +242,9 @@ class Jwt
 
     /**
      * Set whether the subject should be "locked".
-     *
      * @return $this
      */
-    public function setLockSubject(bool $lock)
+    public function setLockSubject(bool $lock): static
     {
         $this->lockSubject = $lock;
 
@@ -333,22 +307,21 @@ class Jwt
 
     /**
      * Hash the subject model and return it.
-     *
      * @param object|string $model
+     * @return string
      */
-    protected function hashSubjectModel($model): string
+    protected function hashSubjectModel(object|string $model): string
     {
-        return sha1(is_object($model) ? get_class($model) : (string) $model);
+        return sha1(is_object($model) ? get_class($model) : (string)$model);
     }
 
     /**
      * Ensure that a token is available.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
+     * @throws JwtException
      */
-    protected function requireToken()
+    protected function requireToken(): void
     {
-        if (! $this->getToken()) {
+        if (!$this->getToken()) {
             throw new JwtException('A token is required');
         }
     }

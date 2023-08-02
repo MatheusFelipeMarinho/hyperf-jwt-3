@@ -16,8 +16,11 @@ class Expiration extends AbstractClaim
 {
     use DatetimeTrait;
 
-    protected $name = 'exp';
+    protected string $name = 'exp';
 
+    /**
+     * @throws TokenExpiredException
+     */
     public function validate(bool $ignoreExpired = false): bool
     {
         if (! $ignoreExpired and $this->isPast($this->getValue())) {

@@ -10,7 +10,7 @@ declare(strict_types=1);
  */
 namespace HyperfTest\Claims;
 
-use Hyperf\Utils\Contracts\Arrayable;
+use Hyperf\Contract\Arrayable;
 use HyperfExt\Jwt\Claims\Expiration;
 use HyperfTest\AbstractTestCase;
 
@@ -21,9 +21,9 @@ use HyperfTest\AbstractTestCase;
 class ClaimTest extends AbstractTestCase
 {
     /**
-     * @var \HyperfExt\Jwt\Claims\Expiration
+     * @var Expiration
      */
-    protected $claim;
+    protected Expiration $claim;
 
     public function setUp(): void
     {

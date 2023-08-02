@@ -17,18 +17,11 @@ use HyperfExt\Jwt\Contracts\ClaimInterface;
 class PayloadFactory
 {
     /**
-     * The claim factory.
-     *
-     * @var \HyperfExt\Jwt\Claims\Factory
-     */
-    protected $claimFactory;
-
-    /**
      * The default claims.
      *
      * @var array
      */
-    protected $defaultClaims = [
+    protected array $defaultClaims = [
         'iss',
         'iat',
         'exp',
@@ -36,9 +29,8 @@ class PayloadFactory
         'jti',
     ];
 
-    public function __construct(ClaimFactory $claimFactory)
+    public function __construct(protected ClaimFactory $claimFactory)
     {
-        $this->claimFactory = $claimFactory;
     }
 
     /**
@@ -54,7 +46,7 @@ class PayloadFactory
      *
      * @return $this
      */
-    public function setDefaultClaims(array $claims)
+    public function setDefaultClaims(array $claims): static
     {
         $this->defaultClaims = $claims;
 
@@ -76,7 +68,7 @@ class PayloadFactory
      *
      * @return $this
      */
-    public function setTtl(int $ttl)
+    public function setTtl(int $ttl): static
     {
         $this->claimFactory->setTtl($ttl);
 

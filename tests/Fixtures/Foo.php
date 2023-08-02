@@ -17,7 +17,7 @@ class Foo extends AbstractClaim
     /**
      * {@inheritdoc}
      */
-    protected $name = 'foo';
+    protected string $name = 'foo';
 
     public function validate(bool $ignoreExpired = false): bool
     {

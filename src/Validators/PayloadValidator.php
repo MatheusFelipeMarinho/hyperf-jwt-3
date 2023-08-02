@@ -23,7 +23,7 @@ class PayloadValidator implements PayloadValidatorInterface
      *
      * @var array
      */
-    protected $requiredClaims = [];
+    protected array $requiredClaims = [];
 
     public function __construct(ConfigInterface $config)
     {
@@ -53,7 +53,7 @@ class PayloadValidator implements PayloadValidatorInterface
      *
      * @return $this
      */
-    public function setRequiredClaims(array $claims)
+    public function setRequiredClaims(array $claims): static
     {
         $this->requiredClaims = $claims;
 
@@ -63,10 +63,9 @@ class PayloadValidator implements PayloadValidatorInterface
     /**
      * Ensure the payload contains the required claims and
      * the claims have the relevant type.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\TokenInvalidException
+     * @throws TokenInvalidException
      */
-    protected function validateStructure(Collection $claims)
+    protected function validateStructure(Collection $claims): static
     {
         if ($this->requiredClaims and ! $claims->hasAllClaims($this->requiredClaims)) {
             throw new TokenInvalidException('JWT payload does not contain the required claims');
@@ -76,9 +75,6 @@ class PayloadValidator implements PayloadValidatorInterface
 
     /**
      * Validate the payload timestamps.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\TokenExpiredException
-     * @throws \HyperfExt\Jwt\Exceptions\TokenInvalidException
      */
     protected function validatePayload(Collection $claims, bool $ignoreExpired = false): Collection
     {

@@ -20,9 +20,9 @@ class IssuedAt extends AbstractClaim
         validateCreate as commonValidateCreate;
     }
 
-    protected $name = 'iat';
+    protected string $name = 'iat';
 
-    public function validateCreate($value)
+    public function validateCreate(mixed $value): mixed
     {
         $this->commonValidateCreate($value);
 

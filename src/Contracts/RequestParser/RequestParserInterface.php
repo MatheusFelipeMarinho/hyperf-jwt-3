@@ -16,19 +16,16 @@ interface RequestParserInterface
 {
     /**
      * Get the parser chain.
-     *
-     * @return \HyperfExt\Jwt\Contracts\RequestParser\HandlerInterface[]
+     * @return HandlerInterface[]
      */
     public function getHandlers(): array;
 
     /**
      * Set the order of the parser chain.
-     *
-     * @param \HyperfExt\Jwt\Contracts\RequestParser\HandlerInterface[] $handlers
-     *
+     * @param HandlerInterface[] $handlers
      * @return $this
      */
-    public function setHandlers(array $handlers);
+    public function setHandlers(array $handlers): static;
 
     /**
      * Iterate through the parsers and attempt to retrieve

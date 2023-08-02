@@ -10,6 +10,8 @@ declare(strict_types=1);
  */
 namespace HyperfExt\Jwt\Contracts;
 
+use HyperfExt\Jwt\Exceptions\InvalidClaimException;
+
 interface ClaimInterface
 {
     /**
@@ -17,25 +19,25 @@ interface ClaimInterface
      *
      * @param mixed $value
      *
-     * @throws \HyperfExt\Jwt\Exceptions\InvalidClaimException
+     * @throws InvalidClaimException
      *
      * @return $this
      */
-    public function setValue($value);
+    public function setValue(mixed $value): static;
 
     /**
      * Get the claim value.
      *
      * @return mixed
      */
-    public function getValue();
+    public function getValue(): mixed;
 
     /**
      * Set the claim name.
      *
      * @return $this
      */
-    public function setName(string $name);
+    public function setName(string $name): static;
 
     /**
      * Get the claim name.

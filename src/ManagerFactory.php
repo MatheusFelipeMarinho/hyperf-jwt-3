@@ -16,19 +16,20 @@ use HyperfExt\Jwt\Contracts\CodecInterface;
 use HyperfExt\Jwt\Exceptions\InvalidConfigException;
 use HyperfExt\Jwt\Storage\HyperfCache;
 use Psr\Container\ContainerInterface;
+use function Hyperf\Support\make;
 
 class ManagerFactory
 {
     /**
      * @var array
      */
-    private $config;
+    private array $config;
 
     public function __invoke(ContainerInterface $container)
     {
         $config = $container->get(ConfigInterface::class)->get('jwt');
         if (empty($config)) {
-            throw new InvalidConfigException(sprintf('JWT config is not defined.'));
+            throw new InvalidConfigException('JWT config is not defined.');
         }
 
         $this->config = $config;

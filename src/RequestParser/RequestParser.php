@@ -10,18 +10,19 @@ declare(strict_types=1);
  */
 namespace HyperfExt\Jwt\RequestParser;
 
+use HyperfExt\Jwt\Contracts\RequestParser\HandlerInterface;
 use HyperfExt\Jwt\Contracts\RequestParser\RequestParserInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class RequestParser implements RequestParserInterface
 {
     /**
-     * @var \HyperfExt\Jwt\Contracts\RequestParser\HandlerInterface[]
+     * @var HandlerInterface[]
      */
-    private $handlers;
+    private array $handlers;
 
     /**
-     * @param \HyperfExt\Jwt\Contracts\RequestParser\HandlerInterface[] $handlers
+     * @param HandlerInterface[] $handlers
      */
     public function __construct(array $handlers = [])
     {
@@ -33,7 +34,7 @@ class RequestParser implements RequestParserInterface
         return $this->handlers;
     }
 
-    public function setHandlers(array $handlers)
+    public function setHandlers(array $handlers): static
     {
         $this->handlers = $handlers;
 

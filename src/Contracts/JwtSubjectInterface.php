@@ -17,7 +17,7 @@ interface JwtSubjectInterface
      *
      * @return mixed
      */
-    public function getJwtIdentifier();
+    public function getJwtIdentifier(): mixed;
 
     /**
      * Return a key value array, containing any custom claims to be added to the JWT.

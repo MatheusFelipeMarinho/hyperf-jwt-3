@@ -3,11 +3,11 @@
 declare(strict_types=1);
 /**
  * This file is part of hyperf-ext/jwt
- *
  * @link     https://github.com/hyperf-ext/jwt
  * @contact  eric@zhu.email
  * @license  https://github.com/hyperf-ext/jwt/blob/master/LICENSE
  */
+
 namespace HyperfExt\Jwt\Validators;
 
 use HyperfExt\Jwt\Contracts\TokenValidatorInterface;
@@ -22,6 +22,7 @@ class TokenValidator implements TokenValidatorInterface
     public function check(string $value): string
     {
         $this->validateStructure($value);
+
         return $value;
     }
 
@@ -40,9 +41,9 @@ class TokenValidator implements TokenValidatorInterface
     }
 
     /**
-     * @throws \HyperfExt\Jwt\Exceptions\TokenInvalidException
+     * @throws TokenInvalidException
      */
-    protected function validateStructure(string $token)
+    protected function validateStructure(string $token): static
     {
         $parts = explode('.', $token);
 

@@ -12,7 +12,7 @@ namespace HyperfExt\Jwt\Claims;
 
 class Subject extends AbstractClaim
 {
-    protected $name = 'sub';
+    protected string $name = 'sub';
 
     public function validate(bool $ignoreExpired = false): bool
     {

@@ -3,14 +3,14 @@
 declare(strict_types=1);
 /**
  * This file is part of hyperf-ext/jwt
- *
  * @link     https://github.com/hyperf-ext/jwt
  * @contact  eric@zhu.email
  * @license  https://github.com/hyperf-ext/jwt/blob/master/LICENSE
  */
+
 namespace HyperfExt\Jwt;
 
-use Hyperf\Utils\Arr;
+use Hyperf\Collection\Arr;
 use HyperfExt\Jwt\Claims\Factory as ClaimFactory;
 use HyperfExt\Jwt\Contracts\CodecInterface;
 use HyperfExt\Jwt\Contracts\ManagerInterface;
@@ -20,57 +20,23 @@ use HyperfExt\Jwt\Exceptions\TokenBlacklistedException;
 class Manager implements ManagerInterface
 {
     /**
-     * The JWT codec interface.
-     *
-     * @var \HyperfExt\Jwt\Contracts\CodecInterface
-     */
-    protected $codec;
-
-    /**
-     * The blacklist interface.
-     *
-     * @var \HyperfExt\Jwt\Blacklist
-     */
-    protected $blacklist;
-
-    /**
-     * the claim factory.
-     *
-     * @var \HyperfExt\Jwt\Claims\Factory
-     */
-    protected $claimFactory;
-
-    /**
-     * the payload factory.
-     *
-     * @var \HyperfExt\Jwt\PayloadFactory
-     */
-    protected $payloadFactory;
-
-    /**
      * The blacklist flag.
-     *
      * @var bool
      */
-    protected $blacklistEnabled = true;
+    protected bool $blacklistEnabled = true;
 
     /**
      * the persistent claims.
-     *
      * @var array
      */
-    protected $persistentClaims = [];
+    protected array $persistentClaims = [];
 
     public function __construct(
-        CodecInterface $codec,
-        Blacklist $blacklist,
-        ClaimFactory $claimFactory,
-        PayloadFactory $payloadFactory
+        protected CodecInterface $codec,
+        protected Blacklist $blacklist,
+        protected ClaimFactory $claimFactory,
+        protected PayloadFactory $payloadFactory
     ) {
-        $this->codec = $codec;
-        $this->blacklist = $blacklist;
-        $this->claimFactory = $claimFactory;
-        $this->payloadFactory = $payloadFactory;
     }
 
     /**
@@ -85,8 +51,7 @@ class Manager implements ManagerInterface
 
     /**
      * Decode a Token and return the Payload.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\TokenBlacklistedException
+     * @throws TokenBlacklistedException
      */
     public function decode(Token $token, bool $checkBlacklist = true, bool $ignoreExpired = false): Payload
     {
@@ -101,9 +66,8 @@ class Manager implements ManagerInterface
 
     /**
      * Refresh a Token and return a new Token.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\TokenBlacklistedException
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
+     * @throws TokenBlacklistedException
+     * @throws JwtException
      */
     public function refresh(Token $token, bool $forceForever = false, array $customClaims = []): Token
     {
@@ -122,12 +86,11 @@ class Manager implements ManagerInterface
 
     /**
      * Invalidate a Token by adding it to the blacklist.
-     *
-     * @throws \HyperfExt\Jwt\Exceptions\JwtException
+     * @throws JwtException
      */
     public function invalidate(Token $token, bool $forceForever = false): bool
     {
-        if (! $this->blacklistEnabled) {
+        if (!$this->blacklistEnabled) {
             throw new JwtException('You must have the blacklist enabled to invalidate a token.');
         }
 
@@ -171,10 +134,9 @@ class Manager implements ManagerInterface
 
     /**
      * Set whether the blacklist is enabled.
-     *
      * @return $this
      */
-    public function setBlacklistEnabled(bool $enabled)
+    public function setBlacklistEnabled(bool $enabled): static
     {
         $this->blacklistEnabled = $enabled;
 
@@ -183,10 +145,9 @@ class Manager implements ManagerInterface
 
     /**
      * Set the claims to be persisted when refreshing a token.
-     *
      * @return $this
      */
-    public function setPersistentClaims(array $claims)
+    public function setPersistentClaims(array $claims): static
     {
         $this->persistentClaims = $claims;
 
@@ -203,9 +164,7 @@ class Manager implements ManagerInterface
 
     /**
      * Build the claims to go into the refreshed token.
-     *
-     * @param \HyperfExt\Jwt\Payload $payload
-     *
+     * @param Payload $payload
      * @return array
      */
     protected function buildRefreshClaims(Payload $payload)
